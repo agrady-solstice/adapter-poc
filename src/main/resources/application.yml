@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles: local
+  kafka:
+    template:
+      default-topic: test-topic
+    producer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      transaction-id-prefix: txn
+      properties:
+        acks: all
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: adapter-consumer
+      properties:
+        isolation.level: read_committed
+      enable-auto-commit: false
+    listener:
+      ack-mode: RECORD
+ibm:
+  mq:
+    queueManager: QM1
+    channel: DEV.ADMIN.SVRCONN
+    connName: localhost(1414)
+jmsContainer:
+  class: org.springframework.jms.listener.DefaultMessageListenerContainer
+  properties:
+    connectionFactory: connectionFactory
+    destinationName: DEV.QUEUE.1
+    messageListener: messageListener
+
+kafka:
+  consumer:
+    topic: test-topic
